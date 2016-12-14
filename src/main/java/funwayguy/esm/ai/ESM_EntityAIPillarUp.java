@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import funwayguy.esm.core.ESM_Settings;
+import funwayguy.esm.core.ESM_Utils;
 
 public class ESM_EntityAIPillarUp extends EntityAIBase
 {
@@ -31,6 +32,9 @@ public class ESM_EntityAIPillarUp extends EntityAIBase
 	@Override
 	public boolean shouldExecute()
 	{
+		if (!ESM_Utils.isSiegeAllowed(builder.worldObj.getWorldTime()))
+			return false;
+		
 		target = builder.getAttackTarget();
 		
 		if(target == null || !target.isEntityAlive() || builder.posY + 1D >= target.posY)

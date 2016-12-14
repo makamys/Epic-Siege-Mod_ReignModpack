@@ -13,6 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import funwayguy.esm.core.ESM_Settings;
+import funwayguy.esm.core.ESM_Utils;
 
 public class ESM_EntityAIDigging extends EntityAIBase
 {
@@ -30,6 +31,9 @@ public class ESM_EntityAIDigging extends EntityAIBase
 	@Override
 	public boolean shouldExecute()
 	{
+		if (!ESM_Utils.isSiegeAllowed(entityDigger.worldObj.getWorldTime()))
+			return false;
+		
     	// Returns true if something like Iguana Tweaks is nerfing the vanilla picks. This will then cause zombies to ignore the harvestability of blocks when holding picks
     	boolean nerfedPick = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
 		target = entityDigger.getAttackTarget();
