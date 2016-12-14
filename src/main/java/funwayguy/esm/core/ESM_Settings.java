@@ -92,6 +92,8 @@ public class ESM_Settings
 	public static ArrayList<String> ZombieDigBlacklist;
 	public static boolean ZombieSwapList;
 	public static boolean DemolitionZombies;
+	public static int ZombieSiegeFrequency;
+	public static int ZombieSiegeWarmup;
 	
 	//Enderman
 	public static boolean EndermanSlender;
@@ -249,6 +251,10 @@ public class ESM_Settings
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(defConfig.get("Zombie", "Digging Blacklist", new String[]{}, "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = defConfig.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = defConfig.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
+		ZombieSiegeFrequency = defConfig.getInt("Siege Frequency", "Zombie", 1, 1, Integer.MAX_VALUE, "How often in days the Zombies are allowed to have Siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
+				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
+		ZombieSiegeWarmup = defConfig.getInt("Siege Warmup", "Zombie", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before Zombies can become siege-capable. Default of 0 means that Zombies on the very first day can siege - no countdown at all.\n" +
+				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
 		
 		//Blazes
 		BlazeSpawn = defConfig.get("Blaze", "Spawn", true).getBoolean(true);
@@ -435,6 +441,10 @@ public class ESM_Settings
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(config.get("Zombie", "Digging Blacklist", ZombieDigBlacklist.toArray(new String[]{}), "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = config.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = config.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
+		ZombieSiegeFrequency = config.getInt("Siege Frequency", "Zombie", 1, 1, Integer.MAX_VALUE, "How often in days the Zombies are allowed to have Siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
+				"Note that the very first day in the world is considered as the starting point to count from, so it's every x days from day 1. See the Siege Warmup option below to modify that behavior.\n");
+		ZombieSiegeWarmup = config.getInt("Siege Warmup", "Zombie", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before Zombies can become siege-capable. Default of 0 means that Zombies on the very first day can siege - no countdown at all.\n" +
+				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
 		
 		//Blazes
 		BlazeSpawn = config.get("Blaze", "Spawn", BlazeSpawn).getBoolean(BlazeSpawn);
