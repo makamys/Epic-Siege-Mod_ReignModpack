@@ -17,13 +17,30 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "FWG_ESM_VER"
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "eclipse"
+}
+
+version = project.major +"."+ project.minor +"."+  project.build+"-"+ project.releasetype + "-MC" +minecraft.version
 group= "funwayguy.esm" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "EpicSiegeMod"
 
-minecraft {
-    version = "1.7.10-10.13.4.1614-1.7.10"
+ext.versionFile = file('gradle.properties')
+import org.apache.tools.ant.filters.ReplaceTokens
+
+task updateVersion(type:Copy){
+    ant.propertyfile(file: versionFile) {
+        entry(key: 'build', type: 'int', operation: '+', value: 001)
+    }
+    from(sourceSets.main.java.srcDirs){
+        exclude 'mcmod.info'
+    }
+    into 'build/sources/java'
+    filter(ReplaceTokens, tokens: [VERSION: project.version])
 }
+
+compileJava.dependsOn updateVersion
 
 dependencies {
 }
