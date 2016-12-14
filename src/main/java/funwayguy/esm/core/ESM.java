@@ -46,7 +46,8 @@ public class ESM
 		MinecraftForge.EVENT_BUS.register(manager);
 		MinecraftForge.TERRAIN_GEN_BUS.register(manager);
 		FMLCommonHandler.instance().bus().register(manager);
-		FMLCommonHandler.instance().bus().register(new ESM_UpdateNotification());
+		// CosmicDan - unofficial fork, remove update stuff
+		//FMLCommonHandler.instance().bus().register(new ESM_UpdateNotification());
 		
 		GameRegistry.registerWorldGenerator(new WorldGenFortress(), 0);
 		

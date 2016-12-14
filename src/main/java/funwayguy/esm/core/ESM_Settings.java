@@ -23,10 +23,10 @@ import org.apache.logging.log4j.Level;
 public class ESM_Settings
 {
 	//Mod Data
-	public static final String Version = "FWG_ESM_VER";
-	public static final String ID = "ESM";
-	public static final String Channel = "ESM";
-	public static final String Name = "Epic Siege Mod";
+	public static final String Version = "@VERSION@";
+	public static final String ID = "ESM_ReignModpack";
+	public static final String Channel = "ESM_ReignModpack";
+	public static final String Name = "Epic Siege Mod - Unofficial Reign Modpack Edition";
 	public static final String Proxy = "funwayguy.esm.core.proxies";
 	
 	//Main
