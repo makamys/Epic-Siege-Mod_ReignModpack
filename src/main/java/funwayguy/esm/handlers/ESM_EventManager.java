@@ -842,6 +842,7 @@ public class ESM_EventManager
 				curBossMod = 0F;
 			}
 		}
+		ESM_Utils.isWarmupElapsed = false; // reset the warmup flag, check again on next world load
 	}
 	
 	@SubscribeEvent

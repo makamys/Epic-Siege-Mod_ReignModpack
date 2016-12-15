@@ -58,6 +58,8 @@ import funwayguy.esm.handlers.ESM_PathCapHandler;
 
 public class ESM_Utils
 {
+	public static boolean isWarmupElapsed = false;
+	
     public static int getSuitableSpawnHeight(World world, int par1, int par2)
     {
         int k;
@@ -451,11 +453,11 @@ public class ESM_Utils
 	}
 	
 	public static boolean isSiegeAllowed(Long worldTime) {
-		if ((ESM_Settings.ZombieSiegeWarmup > 0))
+		if ((ESM_Settings.ZombieSiegeWarmup > 0) && !isWarmupElapsed)
 		{
 			if ((worldTime / 24000L) < ESM_Settings.ZombieSiegeWarmup)
 				return false; // still warming up
-			ESM_Settings.ZombieSiegeWarmup = 0; // cheap trick to save checking for warmup again 
+			isWarmupElapsed = true; // save unnecessary logic
 		}
 		return (ESM_Settings.ZombieSiegeFrequency == 1) ? true : (((worldTime / 24000L)) % (ESM_Settings.ZombieSiegeFrequency)) == 0; 
 	}
