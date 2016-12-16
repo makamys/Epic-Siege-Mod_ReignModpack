@@ -198,7 +198,7 @@ public class ESM_EventManager
 				{
 					((EntityZombie)event.entity).setCurrentItemOrArmor(0, new ItemStack(Items.iron_pickaxe));
 				}
-			} else if(ESM_Settings.DemolitionZombies && event.world.rand.nextFloat() < 0.1F)
+			} else if(ESM_Settings.DemolitionZombies && event.world.rand.nextFloat() < 0.1F && ESM_Utils.isSiegeAllowed(event.world.getWorldTime()))
 			{
 				((EntityZombie)event.entity).setCurrentItemOrArmor(0, new ItemStack(Blocks.tnt));
 			}
