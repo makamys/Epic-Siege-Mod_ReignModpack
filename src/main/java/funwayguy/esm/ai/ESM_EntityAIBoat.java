@@ -8,20 +8,11 @@ import net.minecraft.entity.item.EntityBoat;
 
 public class ESM_EntityAIBoat extends EntityAIBase
 {
-	boolean usedBoat = false;
 	EntityLiving host;
 	
 	public ESM_EntityAIBoat(EntityLiving host)
 	{
 		this.host = host;
-		
-		if(host.getEntityData().hasKey("ESM_BOAT"))
-		{
-			usedBoat = host.getEntityData().getBoolean("ESM_BOAT");
-		} else
-		{
-			usedBoat = host.getRNG().nextInt(4) != 0; // Only 25% of mobs will actually have a spare boat on hand, otherwise we will try and hijack one
-		}
 	}
 	
 	@Override
@@ -45,17 +36,12 @@ public class ESM_EntityAIBoat extends EntityAIBase
 					return true;
 				}
 			}
-			
-			if(!usedBoat)
-			{
-				host.getEntityData().setBoolean("ESM_BOAT", true);
-				usedBoat = true;
-				EntityBoat boat = new EntityBoat(host.worldObj);
-				boat.setPosition(host.posX, host.posY, host.posZ);
-				host.worldObj.spawnEntityInWorld(boat);
-				host.mountEntity(boat);
-				return true;
-			}
+			host.getEntityData().setBoolean("ESM_BOAT", true);
+			EntityBoat boat = new EntityBoat(host.worldObj);
+			boat.setPosition(host.posX, host.posY, host.posZ);
+			host.worldObj.spawnEntityInWorld(boat);
+			host.mountEntity(boat);
+			return true;
 		}
 		
 		return false;
@@ -75,12 +61,9 @@ public class ESM_EntityAIBoat extends EntityAIBase
 		if(boat.onGround || (boat.isCollidedHorizontally && boat.motionX <= 0.25F && boat.motionZ <= 0.25F) || (target != null && host.getDistance(target.posX, target.posY, target.posZ) <= 4))
 		{
 			host.dismountEntity(boat);
-			boat.riddenByEntity = null;
 			host.ridingEntity = null;
-			// Try to stop the boat from moving away
-			boat.motionX = 0D;
-			boat.motionY = 0D;
-			boat.motionZ = 0D;
+			// Despawn the boat
+			boat.setDead();
 			return;
 		}
 		
