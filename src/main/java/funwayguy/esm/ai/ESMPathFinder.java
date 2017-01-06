@@ -22,7 +22,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import org.apache.logging.log4j.Level;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import funwayguy.esm.core.ESM;
 
 public class ESMPathFinder extends PathFinder
