@@ -48,6 +48,8 @@ public class ESM_Settings
 	public static boolean friendlyFire;
 	public static ArrayList<String> AIExempt = new ArrayList<String>();
 	public static boolean flipBlacklist = false;
+	public static int SiegeFrequency;
+	public static int SiegeWarmup;
 	
 	public static HashMap<Integer, DimSettings> dimSettings = new HashMap<Integer, DimSettings>();
 	
@@ -64,6 +66,7 @@ public class ESM_Settings
 	public static boolean CreeperChargers;
 	public static boolean CenaCreeper = false;
 	public static int CenaCreeperRarity = 9;
+	public static boolean CreeperEnhancementsOnlyWhenSiegeAllowed = true;
 	
 	//Blaze
 	public static boolean BlazeSpawn;
@@ -92,8 +95,7 @@ public class ESM_Settings
 	public static ArrayList<String> ZombieDigBlacklist;
 	public static boolean ZombieSwapList;
 	public static boolean DemolitionZombies;
-	public static int ZombieSiegeFrequency;
-	public static int ZombieSiegeWarmup;
+	public static boolean ZombieEnhancementsOnlyWhenSiegeAllowed = true;
 	
 	//Enderman
 	public static boolean EndermanSlender;
@@ -186,6 +188,10 @@ public class ESM_Settings
 		friendlyFire = defConfig.getBoolean("Friendly Fire", "Main", true, "Can mobs harm eachother (type specific in chaos mode)");
 		attackPets  = defConfig.getBoolean("Attack Pets", "Main", true, "Mobs will attack player owned pets");
 		flipBlacklist = defConfig.getBoolean("Flip Exemtions", "Main", false, "Flips the exemption listing to whitelist mode");
+		SiegeFrequency = defConfig.getInt("Siege Frequency", "Main", 1, 1, Integer.MAX_VALUE, "How often in days the various mobs are allowed to gain siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
+				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
+		SiegeWarmup = defConfig.getInt("Siege Warmup", "Main", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before mobs can become siege-capable. Default of 0 means that mobs on the very first day can siege - no countdown at all.\n" +
+				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
 		
 		String[] tmpAIE = defConfig.get("Main", "AI Exempt Mob IDs", new String[]{"VillagerGolem"}).getStringList();
 		AIExempt = new ArrayList<String>();
@@ -211,6 +217,8 @@ public class ESM_Settings
 		CreeperChargers = defConfig.getBoolean("Chargering", "Creeper", true, "Creepers will run at you at speed before detonating");
 		CenaCreeper = defConfig.getBoolean("Cena Creeper", "Creeper", false, "AND HIS NAME IS...");
 		CenaCreeperRarity = defConfig.getInt("Cena Creeper Rarity", "Creeper", 9, 0, Integer.MAX_VALUE, "How rare are they");
+		CreeperEnhancementsOnlyWhenSiegeAllowed = defConfig.getBoolean("Enhance only when siege allowed", "Creeper", true, "If true, all creeper enhancements will be skipped if siege is not allowed.\n" + 
+				"See freqency and warmup settings under Main. Applies to newly-spawned creepers only.");
 		
 		//Skeletons
 		SkeletonAccuracy = defConfig.get("Skeleton", "Arrow Error", 0).getInt(0);
@@ -251,10 +259,8 @@ public class ESM_Settings
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(defConfig.get("Zombie", "Digging Blacklist", new String[]{}, "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = defConfig.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = defConfig.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
-		ZombieSiegeFrequency = defConfig.getInt("Siege Frequency", "Zombie", 1, 1, Integer.MAX_VALUE, "How often in days the Zombies are allowed to have Siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
-				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
-		ZombieSiegeWarmup = defConfig.getInt("Siege Warmup", "Zombie", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before Zombies can become siege-capable. Default of 0 means that Zombies on the very first day can siege - no countdown at all.\n" +
-				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
+		ZombieEnhancementsOnlyWhenSiegeAllowed = defConfig.getBoolean("Enhance only when siege allowed", "Zombie", true, "If true, the Zombie siege capabilites will be disabled if siege is not allowed.\n" + 
+				"See freqency and warmup settings under Main. Applies to all existing Zombies - including already-spawned ones.");
 		
 		//Blazes
 		BlazeSpawn = defConfig.get("Blaze", "Spawn", true).getBoolean(true);
@@ -415,6 +421,11 @@ public class ESM_Settings
 		friendlyFire = config.getBoolean("Friendly Fire", "Main", friendlyFire, "Can mobs harm eachother (type specific in chaos mode)");
 		attackPets  = config.getBoolean("Attack Pets", "Main", attackPets, "Mobs will attack player owned pets");
 		flipBlacklist = config.getBoolean("Flip Exemtions", "Main", false, "Flips the exemption listing to whitelist mode");
+		SiegeFrequency = config.getInt("Siege Frequency", "Main", 1, 1, Integer.MAX_VALUE, "How often in days the various mobs are allowed to gain siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
+				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
+		SiegeWarmup = config.getInt("Siege Warmup", "Main", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before mobs can become siege-capable. Default of 0 means that mobs on the very first day can siege - no countdown at all.\n" +
+				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
+		
 		
 		//Witch
 		customPotions = config.getStringList("Custom Potions", "Witch", customPotions, "List of potion types witches can throw (\"id:duration:lvl\")");
@@ -427,6 +438,8 @@ public class ESM_Settings
 		CreeperChargers = config.getBoolean("Chargering", "Creeper", true, "Creepers will run at you at speed before detonating");
 		CenaCreeper = config.getBoolean("Cena Creeper", "Creeper", false, "AND HIS NAME IS...");
 		CenaCreeperRarity = config.getInt("Cena Creeper Rarity", "Creeper", 9, 0, Integer.MAX_VALUE, "How rare are they");
+		CreeperEnhancementsOnlyWhenSiegeAllowed = config.getBoolean("Enhance only when siege allowed", "Creeper", true, "If true, all creeper enhancements will be skipped if siege is not allowed.\n" + 
+				"(See freqency and warmup settings under Main).");
 		
 		//Skeletons
 		SkeletonAccuracy = config.get("Skeleton", "Arrow Error", SkeletonAccuracy).getInt(SkeletonAccuracy);
@@ -441,10 +454,6 @@ public class ESM_Settings
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(config.get("Zombie", "Digging Blacklist", ZombieDigBlacklist.toArray(new String[]{}), "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = config.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = config.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
-		ZombieSiegeFrequency = config.getInt("Siege Frequency", "Zombie", 1, 1, Integer.MAX_VALUE, "How often in days the Zombies are allowed to have Siege capabilites (dig, pillar, demolition and/or grief - whatever is enabled). Default of 1 means every day/night.\n" +
-				"Note that the very first day in the world is considered as the starting point to count from, so it's every x days from day 1. See the Siege Warmup option below to modify that behavior.\n");
-		ZombieSiegeWarmup = config.getInt("Siege Warmup", "Zombie", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before Zombies can become siege-capable. Default of 0 means that Zombies on the very first day can siege - no countdown at all.\n" +
-				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
 		
 		//Blazes
 		BlazeSpawn = config.get("Blaze", "Spawn", BlazeSpawn).getBoolean(BlazeSpawn);

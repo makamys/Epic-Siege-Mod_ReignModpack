@@ -119,6 +119,7 @@ public class ESM_Utils
 	@SuppressWarnings("unchecked")
 	public static void replaceAI(EntityLiving entityLiving, boolean firstPass)
 	{
+        // TODO: Check if the PathNavigate replacement is compatible with PathfinderTweaks (it could be overwriting it, somehow gate hopping has started again)
 		PathNavigate oldNav = entityLiving.getNavigator();
 		
 		if(oldNav != null && oldNav.getClass() == PathNavigate.class)
@@ -219,22 +220,24 @@ public class ESM_Utils
 				ObfuscationReflectionHelper.setPrivateValue(EntityAIFollowOwner.class, (EntityAIFollowOwner)task.action, entityLiving.getNavigator(), "field_75337_g", "petPathfinder"); // Minor fix to make sure the navigation is using the new one
 			} else if(task.action.getClass() == EntityAICreeperSwell.class && entityLiving instanceof EntityCreeper)
 			{
-				if(!replaceCS)
-				{
-					replaceCS = true;
-					EntityAITaskEntry replacement;
-					
-					if(ESM_Settings.CenaCreeper && (ESM_Settings.CenaCreeperRarity <= 0 || entityLiving.worldObj.rand.nextInt(ESM_Settings.CenaCreeperRarity) == 0))
+				if (ESM_Settings.CreeperEnhancementsOnlyWhenSiegeAllowed && isSiegeAllowed(entityLiving.worldObj.getWorldTime())) {
+					if(!replaceCS)
 					{
-						replacement = entityLiving.tasks.new EntityAITaskEntry(task.priority, new ESM_EntityAIJohnCena((EntityCreeper)entityLiving));
+						replaceCS = true;
+						EntityAITaskEntry replacement;
+						
+						if(ESM_Settings.CenaCreeper && (ESM_Settings.CenaCreeperRarity <= 0 || entityLiving.worldObj.rand.nextInt(ESM_Settings.CenaCreeperRarity) == 0))
+						{
+							replacement = entityLiving.tasks.new EntityAITaskEntry(task.priority, new ESM_EntityAIJohnCena((EntityCreeper)entityLiving));
+						} else
+						{
+							replacement = entityLiving.tasks.new EntityAITaskEntry(task.priority, new ESM_EntityAICreeperSwell((EntityCreeper)entityLiving));
+						}
+						entityLiving.tasks.taskEntries.set(i, replacement);
 					} else
 					{
-						replacement = entityLiving.tasks.new EntityAITaskEntry(task.priority, new ESM_EntityAICreeperSwell((EntityCreeper)entityLiving));
+						entityLiving.tasks.taskEntries.remove(i);
 					}
-					entityLiving.tasks.taskEntries.set(i, replacement);
-				} else
-				{
-					entityLiving.tasks.taskEntries.remove(i);
 				}
 			} else if(task.action.getClass() == EntityAIAvoidEntity.class && entityLiving instanceof EntityVillager)
 			{
@@ -453,12 +456,12 @@ public class ESM_Utils
 	}
 	
 	public static boolean isSiegeAllowed(Long worldTime) {
-		if ((ESM_Settings.ZombieSiegeWarmup > 0) && !isWarmupElapsed)
+		if ((ESM_Settings.SiegeWarmup > 0) && !isWarmupElapsed)
 		{
-			if ((worldTime / 24000L) < ESM_Settings.ZombieSiegeWarmup)
+			if ((worldTime / 24000L) < ESM_Settings.SiegeWarmup)
 				return false; // still warming up
 			isWarmupElapsed = true; // save unnecessary logic
 		}
-		return (ESM_Settings.ZombieSiegeFrequency == 1) ? true : (((worldTime / 24000L)) % (ESM_Settings.ZombieSiegeFrequency)) == 0; 
+		return (ESM_Settings.SiegeFrequency == 1) ? true : (((worldTime / 24000L)) % (ESM_Settings.SiegeFrequency)) == 0; 
 	}
 }

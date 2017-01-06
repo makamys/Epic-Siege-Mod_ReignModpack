@@ -32,8 +32,9 @@ public class ESM_EntityAIPillarUp extends EntityAIBase
 	@Override
 	public boolean shouldExecute()
 	{
-		if (!ESM_Utils.isSiegeAllowed(builder.worldObj.getWorldTime()))
-			return false;
+		if (ESM_Settings.ZombieEnhancementsOnlyWhenSiegeAllowed)
+			if (!ESM_Utils.isSiegeAllowed(builder.worldObj.getWorldTime()))
+				return false;
 		
 		target = builder.getAttackTarget();
 		
