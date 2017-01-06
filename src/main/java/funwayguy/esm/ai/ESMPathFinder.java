@@ -3,7 +3,10 @@ package funwayguy.esm.ai;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockFenceGate;
@@ -18,11 +21,13 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import org.apache.logging.log4j.Level;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import funwayguy.esm.core.ESM;
 
 public class ESMPathFinder extends PathFinder
 {
-	static ArrayList<Block> avoidBlocks;
+	static Set<Block> avoidBlocks;
 	
     /** should the PathFinder go through wodden door blocks */
     private boolean isWoddenDoorAllowed;
@@ -238,7 +243,9 @@ public class ESMPathFinder extends PathFinder
     
     static
     {
-    	avoidBlocks = new ArrayList<Block>();
+    	
+    	avoidBlocks = new HashSet<Block>();
+
     	avoidBlocks.add(Blocks.stone_pressure_plate);
     	avoidBlocks.add(Blocks.wooden_pressure_plate);
     	avoidBlocks.add(Blocks.tripwire);
