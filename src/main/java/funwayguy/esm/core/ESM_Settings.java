@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import net.minecraft.entity.EntityList;
@@ -91,7 +92,7 @@ public class ESM_Settings
 	public static boolean ZombieDiggers;
 	public static boolean ZombieDiggerTools;
 	public static int ZombiePillaring;
-	public static ArrayList<String> ZombieGriefBlocks;
+	public static Set<String> ZombieGriefBlocks;
 	public static boolean ZombieGriefBlocksAnyTime;
 	public static boolean ZombieGriefBlocksNoTool;
 	public static boolean ZombieGriefBlocksLightSources;
@@ -259,7 +260,7 @@ public class ESM_Settings
 				"minecraft:bed",
 				"minecraft:fence"
 		};
-		ZombieGriefBlocks = new ArrayList<String>(Arrays.asList(defConfig.get("Zombie", "General Griefable Blocks", defGrief, "What blocks will be targeted for destruction when not attacking players (Does not affect general digging, light sources are included by default, add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
+		ZombieGriefBlocks = new HashSet<String>(Arrays.asList(defConfig.get("Zombie", "General Griefable Blocks", defGrief, "What blocks will be targeted for destruction when not attacking players (Does not affect general digging, light sources are included by default, add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieGriefBlocksAnyTime = defConfig.get("Zombie", "Always Griefable", true, "If true, Zombies will be able to grief blocks from the block list any time - not just when a siege is underway.").getBoolean(true);
 		ZombieGriefBlocksNoTool = defConfig.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = defConfig.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
@@ -458,7 +459,7 @@ public class ESM_Settings
 		ZombieDiggers = config.get("Zombie", "Diggers", ZombieDiggers).getBoolean(ZombieDiggers);
 		ZombieDiggerTools = config.get("Zombie", "Need Required Tools", ZombieDiggerTools).getBoolean(ZombieDiggerTools);
 		ZombiePillaring = config.get("Zombie", "Pillaring Blocks", ZombiePillaring, "How many blocks to give zombies to pillar up with").getInt(ZombiePillaring);
-		ZombieGriefBlocks = new ArrayList<String>(Arrays.asList(config.get("Zombie", "General Griefable Blocks", ZombieGriefBlocks.toArray(new String[]{}), "What blocks will be targeted for destruction when not attacking players (Does not affect general digging, light sources are included by default, add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
+		ZombieGriefBlocks = new HashSet<String>(Arrays.asList(config.get("Zombie", "General Griefable Blocks", ZombieGriefBlocks.toArray(new String[]{}), "What blocks will be targeted for destruction when not attacking players (Does not affect general digging, light sources are included by default, add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieGriefBlocksAnyTime = config.get("Zombie", "Always Griefable", true, "If true, Zombies will be able to grief blocks from the block list any time - not just when a siege is underway.").getBoolean(true);
 		ZombieGriefBlocksNoTool = config.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = config.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
