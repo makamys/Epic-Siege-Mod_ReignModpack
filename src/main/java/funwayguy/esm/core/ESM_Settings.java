@@ -96,7 +96,7 @@ public class ESM_Settings
 	public static boolean ZombieGriefBlocksAnyTime;
 	public static boolean ZombieGriefBlocksNoTool;
 	public static boolean ZombieGriefBlocksLightSources;
-	public static int ZombieGriefBlocksTriesPerTick;
+	public static int ZombieGriefBlocksTriesPerTick = 30; // too high? Performance needs to be evaluated 
 	public static ArrayList<String> ZombieDigBlacklist;
 	public static boolean ZombieSwapList;
 	public static boolean DemolitionZombies;
@@ -264,7 +264,7 @@ public class ESM_Settings
 		ZombieGriefBlocksAnyTime = defConfig.get("Zombie", "Always Griefable", true, "If true, Zombies will be able to grief blocks from the block list any time - not just when a siege is underway.").getBoolean(true);
 		ZombieGriefBlocksNoTool = defConfig.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = defConfig.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
-		ZombieGriefBlocksTriesPerTick = defConfig.get("Zombie", "How many iterations to search for Griefable Blocks per tick", 10, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(10);
+		ZombieGriefBlocksTriesPerTick = defConfig.get("Zombie", "How many iterations to search for Griefable Blocks per tick", ZombieGriefBlocksTriesPerTick, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(ZombieGriefBlocksTriesPerTick);
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(defConfig.get("Zombie", "Digging Blacklist", new String[]{}, "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = defConfig.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = defConfig.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
@@ -463,7 +463,7 @@ public class ESM_Settings
 		ZombieGriefBlocksAnyTime = config.get("Zombie", "Always Griefable", true, "If true, Zombies will be able to grief blocks from the block list any time - not just when a siege is underway.").getBoolean(true);
 		ZombieGriefBlocksNoTool = config.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = config.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
-		ZombieGriefBlocksTriesPerTick = config.get("Zombie", "How many iterations to search for Griefable Blocks per tick", 10, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(10);
+		ZombieGriefBlocksTriesPerTick = config.get("Zombie", "How many iterations to search for Griefable Blocks per tick", ZombieGriefBlocksTriesPerTick, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(ZombieGriefBlocksTriesPerTick);
 		ZombieDigBlacklist = new ArrayList<String>(Arrays.asList(config.get("Zombie", "Digging Blacklist", ZombieDigBlacklist.toArray(new String[]{}), "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = config.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = config.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
