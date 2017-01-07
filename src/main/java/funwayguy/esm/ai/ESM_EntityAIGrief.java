@@ -65,7 +65,7 @@ public class ESM_EntityAIGrief extends EntityAIBase
 			int meta = entityLiving.worldObj.getBlockMetadata(ii, jj, kk);
 			String regName = Block.blockRegistry.getNameForObject(block);
 			
-			if((ESM_Settings.ZombieGriefBlocks.contains(regName) || ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta) || block.getLightValue() > 0) && block.getBlockHardness(entityLiving.worldObj, ii, jj, kk) >= 0 && !block.getMaterial().isLiquid())
+			if((ESM_Settings.ZombieGriefBlocks.contains(regName) || ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta) || (ESM_Settings.ZombieGriefBlocksLightSources && block.getLightValue() > 0)) && block.getBlockHardness(entityLiving.worldObj, ii, jj, kk) >= 0 && !block.getMaterial().isLiquid())
 			{
 				if(!ESM_Settings.ZombieDiggerTools || ESM_Settings.ZombieGriefBlocksNoTool || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired())
 				{
