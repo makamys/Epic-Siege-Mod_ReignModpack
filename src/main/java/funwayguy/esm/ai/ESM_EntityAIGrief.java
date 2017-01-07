@@ -11,12 +11,16 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 public class ESM_EntityAIGrief extends EntityAIBase
 {
 	EntityLiving entityLiving;
 	int[] markedLoc;
 	int digTick = 0;
+	int reachDistSq = 4; // distance squared (I think?) of reach distance  
+	int pathRetry = 0;
 	
 	public ESM_EntityAIGrief(EntityLiving entity)
 	{
@@ -121,12 +125,23 @@ public class ESM_EntityAIGrief extends EntityAIBase
 			return;
 		}
 		
-		if(entityLiving.getDistance(markedLoc[0], markedLoc[1], markedLoc[2]) >= 3)
+		if(entityLiving.getDistance(markedLoc[0], markedLoc[1], markedLoc[2]) >= reachDistSq)
 		{
+			// griefable object is too far, need to move closer
 			if(entityLiving.getNavigator().noPath())
 			{
+				// too far AND can't get a valid path, try and path again
 				entityLiving.getNavigator().tryMoveToXYZ(markedLoc[0], markedLoc[1], markedLoc[2], 1D);
+				pathRetry++;
 			}
+			if (pathRetry >= 40)   //   (╯°□°）╯︵ ┻━┻
+				markedLoc = null;
+			digTick = 0;
+			return;
+		}
+		
+		if (!canSeeBlockAt(markedLoc[0], markedLoc[1], markedLoc[2])) {
+			markedLoc = null;
 			digTick = 0;
 			return;
 		}
@@ -158,5 +173,43 @@ public class ESM_EntityAIGrief extends EntityAIBase
 				entityLiving.swingItem();
 			}
 		}
+	}
+	
+	private boolean canSeeBlockAt(int posX, int posY, int posZ) {
+		
+		if (isCollidingWithPotentialTarget(posX, posY, posZ))
+			return true;
+		
+		Vec3 thisEntity = Vec3.createVectorHelper(entityLiving.posX, entityLiving.posY + (double)entityLiving.getEyeHeight(), entityLiving.posZ);
+		Vec3 target = Vec3.createVectorHelper(posX, posY, posZ);
+		MovingObjectPosition mop = entityLiving.worldObj.func_147447_a(thisEntity, target, false, false, true);
+		
+		if (mop == null)
+			return false;
+		
+		if (mop.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK)
+			if (mop.blockX == posX && mop.blockY == posY && mop.blockZ == posZ)
+				return true;
+		
+		return false;
+	}
+	
+	private boolean isCollidingWithPotentialTarget(int posX, int posY, int posZ) {
+		// entity might be colliding (or arrived) already....
+		// ...no need to ray-trace. Allow grief if target is no more than 1 block away from the mob.
+		if (isWithinRangeOf(posX, MathHelper.floor_double(entityLiving.posX), 1)) {
+			if (isWithinRangeOf(posZ, MathHelper.floor_double(entityLiving.posZ), 1)) {
+				if (isWithinRangeOf(posY, MathHelper.floor_double(entityLiving.posY + (double)entityLiving.getEyeHeight()), 1))
+					return true;
+				// also check from feet-level. I've heard Zombies can kick.
+				if (isWithinRangeOf(posY, MathHelper.floor_double(entityLiving.posY), 1))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean isWithinRangeOf(int from, int to, int range) {
+		return (Math.abs(from - to) <= range) ? true : false;
 	}
 }
