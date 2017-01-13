@@ -22,6 +22,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import org.apache.logging.log4j.Level;
 
+import funwayguy.esm.ai.interop.ModAccessors;
 import funwayguy.esm.core.ESM;
 
 public class ESMPathFinder extends PathFinder
@@ -123,6 +124,10 @@ public class ESMPathFinder extends PathFinder
                 		return -2;
                     } else if (block.getMaterial() != Material.air)
                     {
+                    	if (ModAccessors.PATHFINDERTWEAKS_LOADED)
+                    		if (ModAccessors.PathfinderTweaks.isTallBlock(entity, block, l, i1, j1))
+                    			return -3;
+                    	
                         if (block == Blocks.trapdoor)
                         {
                             flag3 = true;

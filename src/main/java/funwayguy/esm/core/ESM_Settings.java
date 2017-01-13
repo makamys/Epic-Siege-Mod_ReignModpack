@@ -96,7 +96,7 @@ public class ESM_Settings
 	public static boolean ZombieGriefBlocksAnyTime;
 	public static boolean ZombieGriefBlocksNoTool;
 	public static boolean ZombieGriefBlocksLightSources;
-	public static int ZombieGriefBlocksTriesPerTick = 30; // too high? Performance needs to be evaluated 
+	public static int ZombieGriefBlocksTriesPerTick = 30;
 	public static ArrayList<String> ZombieDigBlacklist;
 	public static boolean ZombieSwapList;
 	public static boolean DemolitionZombies;

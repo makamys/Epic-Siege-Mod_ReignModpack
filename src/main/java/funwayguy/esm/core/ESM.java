@@ -12,6 +12,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import funwayguy.esm.ai.interop.ModAccessors;
 import funwayguy.esm.core.proxies.CommonProxy;
 import funwayguy.esm.entities.EntityESMGhast;
 import funwayguy.esm.entities.EntityNeatZombie;
@@ -58,6 +59,9 @@ public class ESM
 		int zombieID = EntityRegistry.findGlobalUniqueEntityId();
 		EntityRegistry.registerGlobalEntityID(EntityNeatZombie.class, "NEAT_Zombie", zombieID);
 		EntityRegistry.registerModEntity(EntityNeatZombie.class, "NEAT_Zombie", zombieID, instance, 128, 1, true);
+		
+		// load cross-mod compatibility
+		ModAccessors.init();
 	}
 	
 	@EventHandler
