@@ -2,6 +2,10 @@ package funwayguy.esm.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -29,8 +33,13 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemPickaxe;
+import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
@@ -466,4 +475,35 @@ public class ESM_Utils
 		}
 		return (ESM_Settings.SiegeFrequency == 1) ? true : (((worldTime / 24000L)) % (ESM_Settings.SiegeFrequency)) == 0; 
 	}
+	
+	private static boolean nerfedPick = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
+	
+	/**
+	 * Used by ESMPathFinder and ESM_EntityAIDoorInteract to check if a BlockDoor, 
+	 * BlockFenceGate or BlockTrapDoor subclass should be considered griefable.
+	 * @param block a block that subclasses either BlockDoor, BlockFenceGate or BlockTrapDoor
+	 */
+	public static boolean isDoorOrGateGriefable(World world, Block block, int meta, Entity entity) {
+		if (world.difficultySetting == EnumDifficulty.HARD)
+			if (block == Blocks.wooden_door || block == Blocks.trapdoor || block == Blocks.fence_gate)
+				return true;
+		
+		ItemStack item = null;
+		if (entity instanceof EntityLiving)
+			item = ((EntityLiving) entity).getEquipmentInSlot(0); 
+		
+		if (!ESM_Settings.ZombieDiggerTools || ESM_Settings.ZombieGriefBlocksNoTool || block.getMaterial().isToolNotRequired() || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock)))) {
+			if (isSiegeAllowed(world.getWorldTime()))
+				return true;
+			
+			String regName = Block.blockRegistry.getNameForObject(block);
+			if (regName != null) {
+				if(ESM_Settings.ZombieGriefBlocks.contains(regName) || ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta)) {
+					return true;
+				}
+			}
+		}
+		
+    	return false;
+    }
 }

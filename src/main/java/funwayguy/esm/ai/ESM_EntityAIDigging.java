@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import funwayguy.esm.core.ESM;
 import funwayguy.esm.core.ESM_Settings;
 import funwayguy.esm.core.ESM_Utils;
 
@@ -22,10 +23,13 @@ public class ESM_EntityAIDigging extends EntityAIBase
 	EntityLiving entityDigger;
 	int digTick = 0;
 	int scanTick = 0;
+	final boolean TOOLS_NERFED;
 	
 	public ESM_EntityAIDigging(EntityLiving entity)
 	{
 		this.entityDigger = entity;
+		// Returns true if something like Iguana Tweaks is nerfing the vanilla picks. This will then cause zombies to ignore the harvestability of blocks when holding picks
+		TOOLS_NERFED = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
 	}
 	
 	@Override
@@ -35,8 +39,6 @@ public class ESM_EntityAIDigging extends EntityAIBase
 			if (!ESM_Utils.isSiegeAllowed(entityDigger.worldObj.getWorldTime()))
 				return false;
 		
-    	// Returns true if something like Iguana Tweaks is nerfing the vanilla picks. This will then cause zombies to ignore the harvestability of blocks when holding picks
-    	boolean nerfedPick = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
 		target = entityDigger.getAttackTarget();
 		
 		if(entityDigger.ticksExisted%10 == 0 && target != null && entityDigger.getNavigator().noPath() && entityDigger.getDistanceToEntity(target) > 1D && (target.onGround || !entityDigger.canEntityBeSeen(target)))
@@ -47,16 +49,16 @@ public class ESM_EntityAIDigging extends EntityAIBase
 			{
 				return false;
 			}
-			
-			ItemStack item = entityDigger.getEquipmentInSlot(0);
 			Block block = entityDigger.worldObj.getBlock(mop.blockX, mop.blockY, mop.blockZ);
 			
-			if(!ESM_Settings.ZombieDiggerTools || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired())
+			if (canHarvestBlock(block))
 			{
 				markedLoc = new int[]{mop.blockX, mop.blockY, mop.blockZ};
+				//ESM.log.warn("Zombie digger with ID " + entityDigger.getEntityId() + " has set target to entity '" + target.getCommandSenderName() + "', ID " + target.getEntityId());
 				return true;
 			} else
 			{
+				//ESM.log.warn("Zombie digger with ID can NOT REACH ENTITY!");
 				return false;
 			}
 		}
@@ -74,7 +76,6 @@ public class ESM_EntityAIDigging extends EntityAIBase
 	public void updateTask()
 	{
     	// Returns true if something like Iguana Tweaks is nerfing the vanilla picks. This will then cause zombies to ignore the harvestability of blocks when holding picks
-    	boolean nerfedPick = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
 		
     	MovingObjectPosition mop = null;
     	
@@ -102,10 +103,7 @@ public class ESM_EntityAIDigging extends EntityAIBase
 		if(str >= 1F)
 		{
 			digTick = 0;
-			
-			ItemStack item = entityDigger.getEquipmentInSlot(0);
-			boolean canHarvest = !ESM_Settings.ZombieDiggerTools || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired();
-			entityDigger.worldObj.func_147480_a(markedLoc[0], markedLoc[1], markedLoc[2], canHarvest);
+			entityDigger.worldObj.func_147480_a(markedLoc[0], markedLoc[1], markedLoc[2], canHarvestBlock(block));
 			markedLoc = null;
 			entityDigger.getNavigator().setPath(entityDigger.getNavigator().getPathToEntityLiving(target), 1D);
 		} else
@@ -117,6 +115,23 @@ public class ESM_EntityAIDigging extends EntityAIBase
 				entityDigger.worldObj.destroyBlockInWorldPartially(entityDigger.getEntityId(), markedLoc[0], markedLoc[1], markedLoc[2], (int)(str * 10F));
 			}
 		}
+	}
+	
+	private boolean canHarvestBlock(Block block) {
+		if (!ESM_Settings.ZombieDiggerTools)
+			return true;
+		if (block.getMaterial().isToolNotRequired())
+			return true;
+		ItemStack item = entityDigger.getEquipmentInSlot(0);
+		if (item != null) {
+			if (item.getItem().canHarvestBlock(block, item))
+				return true;
+			if (item.getItem() instanceof ItemPickaxe)
+				if (TOOLS_NERFED && block.getMaterial() == Material.rock)
+					return true;
+		}
+		
+		return false;
 	}
 	
 	@Override

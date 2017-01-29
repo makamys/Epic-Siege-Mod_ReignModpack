@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.EnumDifficulty;
 import funwayguy.esm.core.ESM_Settings;
+import funwayguy.esm.core.ESM_Utils;
 
 public class ESM_EntityAIBreakDoor extends ESM_EntityAIDoorInteract
 {
@@ -25,7 +26,6 @@ public class ESM_EntityAIBreakDoor extends ESM_EntityAIDoorInteract
     public boolean shouldExecute()
     {
         boolean flag = !super.shouldExecute() ? false : (!this.theEntity.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing") ? false : true);
-        
         if(!flag)
         {
         	return false;
@@ -38,19 +38,19 @@ public class ESM_EntityAIBreakDoor extends ESM_EntityAIDoorInteract
     
     public boolean isValidDoor()
     {
-    	if(this.field_151504_e instanceof BlockDoor && this.field_151504_e.getMaterial().isToolNotRequired())
-    	{
+    	if (ESM_Utils.isDoorOrGateGriefable(this.theEntity.worldObj, this.field_151504_e, this.theEntity.worldObj.getBlockMetadata(this.entityPosX, this.entityPosY, this.entityPosZ), this.theEntity))
+    		return true;
+    	
+    	if(this.field_151504_e instanceof BlockDoor) {
     		return !((BlockDoor)this.field_151504_e).func_150015_f(this.theEntity.worldObj, this.entityPosX, this.entityPosY, this.entityPosZ);
-    	} else if(this.field_151504_e instanceof BlockFenceGate && this.field_151504_e.getMaterial().isToolNotRequired())
-    	{
-    		return !BlockTrapDoor.func_150118_d(this.theEntity.worldObj.getBlockMetadata(this.entityPosX, this.entityPosY, this.entityPosZ));
-    	} else if(this.field_151504_e == Blocks.fence_gate)
-    	{
-    		return !BlockFenceGate.isFenceGateOpen(this.theEntity.worldObj.getBlockMetadata(this.entityPosX, this.entityPosY, this.entityPosZ));
-    	} else
-    	{
-    		return false;
     	}
+    	if(this.field_151504_e instanceof BlockTrapDoor) {
+    		return !BlockTrapDoor.func_150118_d(this.theEntity.worldObj.getBlockMetadata(this.entityPosX, this.entityPosY, this.entityPosZ));
+    	}
+    	if(this.field_151504_e instanceof BlockFenceGate) {
+    		return !BlockFenceGate.isFenceGateOpen(this.theEntity.worldObj.getBlockMetadata(this.entityPosX, this.entityPosY, this.entityPosZ));
+    	}
+    	return false;
     }
 
     /**

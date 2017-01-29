@@ -1,6 +1,10 @@
 package funwayguy.esm.ai;
 
+import funwayguy.esm.core.ESM_Utils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
@@ -111,9 +115,15 @@ public abstract class ESM_EntityAIDoorInteract extends EntityAIBase
         }
     }
 
-    private Block func_151503_a(int p_151503_1_, int p_151503_2_, int p_151503_3_)
+    private Block func_151503_a(int posX, int posY, int posZ)
     {
-        Block block = this.theEntity.worldObj.getBlock(p_151503_1_, p_151503_2_, p_151503_3_);
-        return !(block == Blocks.wooden_door || block == Blocks.trapdoor || block == Blocks.fence_gate) ? null : block;
+        Block block = this.theEntity.worldObj.getBlock(posX, posY, posZ);
+        if (block instanceof BlockDoor || block instanceof BlockFenceGate || block instanceof BlockTrapDoor) {
+        	if (ESM_Utils.isDoorOrGateGriefable(this.theEntity.worldObj, block, this.theEntity.worldObj.getBlockMetadata(posX, posY, posZ), this.theEntity))
+        		return block;
+        }
+        return null;
+        
+        //return !(block == Blocks.wooden_door || block == Blocks.trapdoor || block == Blocks.fence_gate) ? null : block;
     }
 }

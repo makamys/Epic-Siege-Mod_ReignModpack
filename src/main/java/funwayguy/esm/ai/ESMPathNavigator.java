@@ -1,6 +1,7 @@
 package funwayguy.esm.ai;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
+import funwayguy.esm.core.ESM;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
@@ -57,13 +58,13 @@ public class ESMPathNavigator extends PathNavigate
         return !this.canNavigate() ? null : this.getEntityPathToXYZ(this.worldObj, this.theEntity, MathHelper.floor_double(p_75488_1_), (int)p_75488_3_, MathHelper.floor_double(p_75488_5_), this.getPathSearchRange(), this.canPassOpenWoodenDoors, this.canPassClosedWoodenDoors, this.avoidsWater, this.canSwim);
     }
 
-    public PathEntity getEntityPathToXYZ(World world, Entity p_72844_1_, int p_72844_2_, int p_72844_3_, int p_72844_4_, float p_72844_5_, boolean p_72844_6_, boolean p_72844_7_, boolean p_72844_8_, boolean p_72844_9_)
+    public PathEntity getEntityPathToXYZ(World world, Entity entity, int targetX, int targetY, int targetZ, float pathSearchRange, boolean canPassOpenDoors, boolean canPassClosedDoors, boolean avoidsWater, boolean canSwim)
     {
         world.theProfiler.startSection("pathfind");
-        int l = MathHelper.floor_double(p_72844_1_.posX);
-        int i1 = MathHelper.floor_double(p_72844_1_.posY);
-        int j1 = MathHelper.floor_double(p_72844_1_.posZ);
-        int k1 = (int)(p_72844_5_ + 8.0F);
+        int l = MathHelper.floor_double(entity.posX);
+        int i1 = MathHelper.floor_double(entity.posY);
+        int j1 = MathHelper.floor_double(entity.posZ);
+        int k1 = (int)(pathSearchRange + 8.0F);
         int l1 = l - k1;
         int i2 = i1 - k1;
         int j2 = j1 - k1;
@@ -71,7 +72,7 @@ public class ESMPathNavigator extends PathNavigate
         int l2 = i1 + k1;
         int i3 = j1 + k1;
         ChunkCache chunkcache = new ChunkCache(world, l1, i2, j2, k2, l2, i3, 0);
-        PathEntity pathentity = (new ESMPathFinder(chunkcache, p_72844_6_, p_72844_7_, p_72844_8_, p_72844_9_)).createEntityPathTo(p_72844_1_, p_72844_2_, p_72844_3_, p_72844_4_, p_72844_5_);
+        PathEntity pathentity = (new ESMPathFinder(chunkcache, canPassOpenDoors, canPassClosedDoors, avoidsWater, canSwim)).createEntityPathTo(entity, targetX, targetY, targetZ, pathSearchRange);
         world.theProfiler.endSection();
         return pathentity;
     }

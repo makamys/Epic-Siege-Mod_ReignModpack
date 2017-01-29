@@ -11,6 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -20,10 +21,13 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
 import org.apache.logging.log4j.Level;
 
 import funwayguy.esm.ai.interop.ModAccessors;
 import funwayguy.esm.core.ESM;
+import funwayguy.esm.core.ESM_Utils;
 
 public class ESMPathFinder extends PathFinder
 {
@@ -47,7 +51,7 @@ public class ESMPathFinder extends PathFinder
      * otherwise clear except for open trapdoor or water(if not avoiding)
      */
 	@Override
-    public int getVerticalOffset(Entity p_75855_1_, int p_75855_2_, int p_75855_3_, int p_75855_4_, PathPoint p_75855_5_)
+    public int getVerticalOffset(Entity entity, int targetX, int targetY, int targetZ, PathPoint p_75855_5_)
     {
 		boolean flag = false;
 		
@@ -82,7 +86,7 @@ public class ESMPathFinder extends PathFinder
 			}
 		}
 		
-        return VerticalOffset(p_75855_1_, p_75855_2_, p_75855_3_, p_75855_4_, p_75855_5_, flag, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
+        return VerticalOffset(entity, targetX, targetY, targetZ, p_75855_5_, flag, this.isMovementBlockAllowed, this.isWoddenDoorAllowed);
     }
 	
 	Field fieldPathWater = null;
@@ -126,7 +130,8 @@ public class ESMPathFinder extends PathFinder
                     {
                     	if (ModAccessors.PATHFINDERTWEAKS_LOADED)
                     		if (ModAccessors.PathfinderTweaks.isTallBlock(entity, block, l, i1, j1))
-                    			return -3;
+                    			if (!ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity))
+                    				return -3;
                     	
                         if (block == Blocks.trapdoor)
                         {
@@ -168,7 +173,7 @@ public class ESMPathFinder extends PathFinder
                         }
 
                         int k1 = block.getRenderType();
-                        
+
                         if (entity.worldObj.getBlock(l, i1, j1).getRenderType() == 9)
                         {
                             int j2 = MathHelper.floor_double(entity.posX);
@@ -182,9 +187,11 @@ public class ESMPathFinder extends PathFinder
                         } else if(CanFit(entity, block, l, i1, j1))
                         {
                         	continue;
-                        } else if (!block.getBlocksMovement(entity.worldObj, l, i1, j1) && (!moveBlock || !((block instanceof BlockDoor || block instanceof BlockFenceGate) && block.getMaterial().isToolNotRequired())))
-                        {
-                            if (k1 == 11 || k1 == 32)
+                        } else if (!block.getBlocksMovement(entity.worldObj, l, i1, j1)) {
+                        	if (block instanceof BlockDoor || block instanceof BlockFenceGate || block instanceof BlockTrapDoor) {
+                        		return (ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity)) ? 1 : 0;
+                        	}
+                        	if (k1 == 11 || k1 == 32)
                             {
                                 return -3;
                             }
@@ -198,7 +205,7 @@ public class ESMPathFinder extends PathFinder
 
                             if (material != Material.lava)
                             {
-                                return 0;
+                            	return 0;
                             } else if (!entity.handleLavaMovement())
                             {
                                 return -2;
@@ -208,7 +215,6 @@ public class ESMPathFinder extends PathFinder
                 }
             }
         }
-
         return flag3 ? 2 : 1;
     }
     

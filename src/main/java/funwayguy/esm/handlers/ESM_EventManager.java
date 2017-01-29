@@ -468,29 +468,39 @@ public class ESM_EventManager
 	
 	public static boolean usesAI(EntityLivingBase entityLiving)
 	{
-		if(methodAI == null)
+		if (ESM_Settings.simpleAiCheck)
 		{
-			try
-			{
-				methodAI = EntityLivingBase.class.getMethod("func_70650_aV");
-			} catch(Exception e1)
+			if (entityLiving instanceof EntityLiving)
+				if (((EntityLiving)entityLiving).tasks != null)
+					return true;
+			return false;
+		}
+		else
+		{
+			if(methodAI == null)
 			{
 				try
 				{
-					methodAI = EntityLivingBase.class.getMethod("isAIEnabled");
-				} catch(Exception e2)
+					methodAI = EntityLivingBase.class.getMethod("func_70650_aV");
+				} catch(Exception e1)
 				{
-					return false;
+					try
+					{
+						methodAI = EntityLivingBase.class.getMethod("isAIEnabled");
+					} catch(Exception e2)
+					{
+						return false;
+					}
 				}
 			}
-		}
-		
-		try
-		{
-			return (Boolean)methodAI.invoke(entityLiving);
-		} catch(Exception e)
-		{
-			return false;
+			
+			try
+			{
+				return (Boolean)methodAI.invoke(entityLiving);
+			} catch(Exception e)
+			{
+				return false;
+			}
 		}
 	}
 	

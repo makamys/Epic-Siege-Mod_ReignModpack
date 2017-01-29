@@ -51,6 +51,8 @@ public class ESM_Settings
 	public static boolean flipBlacklist = false;
 	public static int SiegeFrequency;
 	public static int SiegeWarmup;
+	public static boolean simpleAiCheck = true;
+	public static int idleTargetInstantDespawnTicks = 600;
 	
 	public static HashMap<Integer, DimSettings> dimSettings = new HashMap<Integer, DimSettings>();
 	
@@ -197,6 +199,8 @@ public class ESM_Settings
 				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
 		SiegeWarmup = defConfig.getInt("Siege Warmup", "Main", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before mobs can become siege-capable. Default of 0 means that mobs on the very first day can siege - no countdown at all.\n" +
 				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
+		simpleAiCheck = defConfig.getBoolean("Simple AI Check", "Main", simpleAiCheck, "Use a more performance-friendly check for new entity AI. Might not catch some special mod-added entities.");
+		idleTargetInstantDespawnTicks = defConfig.getInt("Idle Target Instant Despawn Timout", "Main", idleTargetInstantDespawnTicks, 0, Integer.MAX_VALUE, "If a mob has had no target for this many ticks, instantly despawn it. Set to 0 to disable.");
 		
 		String[] tmpAIE = defConfig.get("Main", "AI Exempt Mob IDs", new String[]{"VillagerGolem"}).getStringList();
 		AIExempt = new ArrayList<String>();
@@ -434,6 +438,8 @@ public class ESM_Settings
 				"The frequency of every x days specified here start from day y, where day y will be the Siege Warmup option below counting down to 0.\n");
 		SiegeWarmup = config.getInt("Siege Warmup", "Main", 0, 0, Integer.MAX_VALUE, "Specify how many days should act as a warmup period before mobs can become siege-capable. Default of 0 means that mobs on the very first day can siege - no countdown at all.\n" +
 				"An example use of this is if you set Siege Frequency to 8 for every full moon (under a vanilla lunar cycle), but you want to avoid the first day full moon bringing sieges - set this to any value from 1 to 7. By the time the next Siege Frequeny is reached on day 8, the Siege Warmup would have elapsed either way.\n");
+		simpleAiCheck = config.getBoolean("Simple AI Check", "Main", simpleAiCheck, "Use a more performance-friendly check for new entity AI. Might not catch some special mod-added entities.");
+		idleTargetInstantDespawnTicks = config.getInt("Idle Target Instant Despawn Timout", "Main", idleTargetInstantDespawnTicks, 0, Integer.MAX_VALUE, "If a mob has had no target for this many ticks, instantly despawn it. Set to 0 to disable.");
 		
 		
 		//Witch
