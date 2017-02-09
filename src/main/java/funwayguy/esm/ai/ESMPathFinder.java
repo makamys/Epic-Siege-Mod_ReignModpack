@@ -14,6 +14,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
@@ -123,16 +124,22 @@ public class ESMPathFinder extends PathFinder
                 {
                     Block block = entity.worldObj.getBlock(l, i1, j1);
                     
+                    if (ModAccessors.PATHFINDERTWEAKS_LOADED) {
+                		if (ModAccessors.PathfinderTweaks.isTallBlock(entity, block, l, i1, j1)) {
+                			if (entity instanceof EntityZombie) {
+                				if (!ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity)) {
+                					return -3;
+                				}
+                			}
+                			return -3;
+                		}
+                	}
+                    
                     if(avoidBlocks.contains(block))
                 	{
                 		return -2;
                     } else if (block.getMaterial() != Material.air)
                     {
-                    	if (ModAccessors.PATHFINDERTWEAKS_LOADED)
-                    		if (ModAccessors.PathfinderTweaks.isTallBlock(entity, block, l, i1, j1))
-                    			if (!ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity))
-                    				return -3;
-                    	
                         if (block == Blocks.trapdoor)
                         {
                             flag3 = true;
@@ -189,7 +196,7 @@ public class ESMPathFinder extends PathFinder
                         	continue;
                         } else if (!block.getBlocksMovement(entity.worldObj, l, i1, j1)) {
                         	if (block instanceof BlockDoor || block instanceof BlockFenceGate || block instanceof BlockTrapDoor) {
-                        		return (ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity)) ? 1 : 0;
+                        		return (entity instanceof EntityZombie && ESM_Utils.isDoorOrGateGriefable(entity.worldObj, entity.worldObj.getBlock(l, i1, j1), entity.worldObj.getBlockMetadata(l, i1, j1), entity)) ? 1 : 0;
                         	}
                         	if (k1 == 11 || k1 == 32)
                             {
@@ -202,7 +209,7 @@ public class ESMPathFinder extends PathFinder
                             }
 
                             Material material = block.getMaterial();
-
+                            
                             if (material != Material.lava)
                             {
                             	return 0;
