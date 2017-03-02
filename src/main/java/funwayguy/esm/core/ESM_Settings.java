@@ -32,7 +32,8 @@ public class ESM_Settings
 	
 	//Main
 	public static int Awareness;
-	public static boolean Xray;
+	private static boolean Xray;
+	private static boolean XrayOnlyDuringSiege;
 	public static int TargetCap;
 	public static boolean VillagerTarget;
 	public static boolean Apocalypse;
@@ -179,7 +180,8 @@ public class ESM_Settings
 		hardDay = defConfig.getInt("Hardcore Day Cycle", "Main", 8, 0, Integer.MAX_VALUE, "The interval in which 'hard' days will occur where mob spawning is increased and lighting is ignored (0 = off, default = 8/full moon)");
 		hardDamage = defConfig.getBoolean("Hardcore Double Damage", "Main", false, "Mobs inflict double damage on hardcore days");
 		Awareness = defConfig.get("Main", "Awareness Radius", 64).getInt(64);
-		Xray = defConfig.get("Main", "Xray Mobs", true).getBoolean(true);
+		Xray = defConfig.get("Main", "Xray Mobs", true, "If enabled, then xray targeting will only be allowed during sieges. Main Xray option must also be enabled.").getBoolean(true);
+		XrayOnlyDuringSiege = defConfig.get("Main", "Xray Mobs only during siege", true).getBoolean(true);
 		TargetCap = defConfig.get("Main", "Pathing Cap", 16).getInt(16);
 		VillagerTarget = defConfig.get("Main", "Villager Targeting", true).getBoolean(true);
 		Apocalypse = defConfig.get("Main", "Apocalypse Mode", false).getBoolean(false);
@@ -420,6 +422,7 @@ public class ESM_Settings
 		hardDamage = config.getBoolean("Hardcore Double Damage", "Main", hardDamage, "Mobs inflict double damage on hardcore days");
 		Awareness = config.get("Main", "Awareness Radius", Awareness).getInt(Awareness);
 		Xray = config.get("Main", "Xray Mobs", Xray).getBoolean(Xray);
+		XrayOnlyDuringSiege = config.get("Main", "Xray Mobs only during siege", XrayOnlyDuringSiege, "If enabled, then xray targeting will only be allowed during sieges. Main Xray option must also be enabled.").getBoolean(XrayOnlyDuringSiege);
 		TargetCap = config.get("Main", "Pathing Cap", TargetCap).getInt(TargetCap);
 		VillagerTarget = config.get("Main", "Villager Targeting", VillagerTarget).getBoolean(VillagerTarget);
 		Apocalypse = config.get("Main", "Apocalypse Mode", Apocalypse).getBoolean(Apocalypse);
@@ -654,5 +657,15 @@ public class ESM_Settings
 			e.printStackTrace();
 			return;
 		}
+	}
+	
+	public static boolean isXrayAllowed(long worldTime) {
+		if (Xray) {
+			if (XrayOnlyDuringSiege)
+				return ESM_Utils.isSiegeAllowed(worldTime);
+			else
+				return true;
+		}
+		return false;
 	}
 }

@@ -67,7 +67,7 @@ public abstract class ESM_EntityAITarget extends EntityAIBase
             }
             else
             {
-                if (this.shouldCheckSight && !ESM_Settings.Xray)
+                if (this.shouldCheckSight && !ESM_Settings.isXrayAllowed(this.taskOwner.worldObj.getWorldTime()))
                 {
                     if (this.taskOwner.getEntitySenses().canSee(entitylivingbase))
                     {
@@ -152,7 +152,7 @@ public abstract class ESM_EntityAITarget extends EntityAIBase
             {
                 return false;
             }
-            else if (this.shouldCheckSight && !this.taskOwner.getEntitySenses().canSee(p_75296_1_) && !ESM_Settings.Xray)
+            else if (this.shouldCheckSight && !this.taskOwner.getEntitySenses().canSee(p_75296_1_) && !ESM_Settings.isXrayAllowed(this.taskOwner.worldObj.getWorldTime()))
             {
                 return false;
             }

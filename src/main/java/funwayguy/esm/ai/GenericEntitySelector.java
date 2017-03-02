@@ -62,7 +62,7 @@ public class GenericEntitySelector implements IEntitySelector
 			return false;
 		}
 		
-		return (ESM_Settings.Xray || host instanceof EntitySpider || host.canEntityBeSeen(subject));
+		return (ESM_Settings.isXrayAllowed(subject.worldObj.getWorldTime()) || host instanceof EntitySpider || host.canEntityBeSeen(subject));
 	}
 	
 }
