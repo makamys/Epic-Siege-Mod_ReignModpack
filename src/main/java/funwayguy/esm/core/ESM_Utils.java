@@ -481,7 +481,7 @@ public class ESM_Utils
 	/**
 	 * Used by ESMPathFinder and ESM_EntityAIDoorInteract to check if a BlockDoor, 
 	 * BlockFenceGate or BlockTrapDoor subclass should be considered griefable.
-	 * @param block a block that subclasses either BlockDoor, BlockFenceGate or BlockTrapDoor
+	 * @param block a block that subclasses either BlockDoor, BlockFenceGate or BlockTrapDoor (this check is NOT made in this method)
 	 */
 	public static boolean isDoorOrGateGriefable(World world, Block block, int meta, Entity entity) {
 		if (world.difficultySetting == EnumDifficulty.HARD)
@@ -505,5 +505,6 @@ public class ESM_Utils
 		}
 		
     	return false;
+    	
     }
 }

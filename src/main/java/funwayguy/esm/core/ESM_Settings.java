@@ -180,8 +180,8 @@ public class ESM_Settings
 		hardDay = defConfig.getInt("Hardcore Day Cycle", "Main", 8, 0, Integer.MAX_VALUE, "The interval in which 'hard' days will occur where mob spawning is increased and lighting is ignored (0 = off, default = 8/full moon)");
 		hardDamage = defConfig.getBoolean("Hardcore Double Damage", "Main", false, "Mobs inflict double damage on hardcore days");
 		Awareness = defConfig.get("Main", "Awareness Radius", 64).getInt(64);
-		Xray = defConfig.get("Main", "Xray Mobs", true, "If enabled, then xray targeting will only be allowed during sieges. Main Xray option must also be enabled.").getBoolean(true);
-		XrayOnlyDuringSiege = defConfig.get("Main", "Xray Mobs only during siege", true).getBoolean(true);
+		Xray = defConfig.get("Main", "Xray Mobs", true).getBoolean(true);
+		XrayOnlyDuringSiege = defConfig.get("Main", "Xray Mobs only during siege", true, "If enabled, then xray targeting will only be allowed during sieges. Main Xray option must also be enabled.").getBoolean(true);
 		TargetCap = defConfig.get("Main", "Pathing Cap", 16).getInt(16);
 		VillagerTarget = defConfig.get("Main", "Villager Targeting", true).getBoolean(true);
 		Apocalypse = defConfig.get("Main", "Apocalypse Mode", false).getBoolean(false);
