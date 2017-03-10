@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -72,6 +75,9 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Save;
 import net.minecraftforge.event.world.WorldEvent.Unload;
+
+import com.cosmicdan.pathfindertweaks.events.PathfinderEvent;
+import com.cosmicdan.pathfindertweaks.events.PathfinderEvent.*;
 import com.google.common.base.Stopwatch;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
@@ -1009,5 +1015,28 @@ public class ESM_EventManager
 				event.setResult(Result.ALLOW);
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public void onPathfinderAvoidOverride(PathfinderAvoidOverrideEvent event) {
+		if (canGrief(event))
+			event.setResult(Result.ALLOW);
+	}
+	
+	@SubscribeEvent
+	public void onCheckCanPathBlock(PathfinderCheckCanPathBlock event) {
+		if (canGrief(event))
+			event.setResult(Result.ALLOW);
+	}
+	
+	private boolean canGrief(PathfinderEvent event) {
+		if (event.entity instanceof EntityZombie) {
+			if (event.block instanceof BlockDoor || event.block instanceof BlockFenceGate || event.block instanceof BlockTrapDoor) {
+				if (ESM_Utils.isDoorOrGateGriefable(event.entity.worldObj, event.block, event.entity.worldObj.getBlockMetadata(event.posX, event.posY, event.posZ), event.entity)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

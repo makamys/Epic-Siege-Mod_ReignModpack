@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCache;
@@ -72,7 +73,7 @@ public class ESMPathNavigator extends PathNavigate
         int l2 = i1 + k1;
         int i3 = j1 + k1;
         ChunkCache chunkcache = new ChunkCache(world, l1, i2, j2, k2, l2, i3, 0);
-        PathEntity pathentity = (new ESMPathFinder(chunkcache, canPassOpenDoors, canPassClosedDoors, avoidsWater, canSwim)).createEntityPathTo(entity, targetX, targetY, targetZ, pathSearchRange);
+        PathEntity pathentity = (new PathFinder(chunkcache, canPassOpenDoors, canPassClosedDoors, avoidsWater, canSwim)).createEntityPathTo(entity, targetX, targetY, targetZ, pathSearchRange);
         world.theProfiler.endSection();
         return pathentity;
     }
@@ -100,7 +101,7 @@ public class ESMPathNavigator extends PathNavigate
         int i2 = j + l;
         int j2 = k + l;
         ChunkCache chunkcache = new ChunkCache(world, i1, j1, k1, l1, i2, j2, 0);
-        PathEntity pathentity = (new ESMPathFinder(chunkcache, p_72865_4_, p_72865_5_, p_72865_6_, p_72865_7_)).createEntityPathTo(p_72865_1_, p_72865_2_, p_72865_3_);
+        PathEntity pathentity = (new PathFinder(chunkcache, p_72865_4_, p_72865_5_, p_72865_6_, p_72865_7_)).createEntityPathTo(p_72865_1_, p_72865_2_, p_72865_3_);
         world.theProfiler.endSection();
         return pathentity;
     }
