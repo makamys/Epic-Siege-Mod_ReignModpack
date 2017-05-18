@@ -466,14 +466,28 @@ public class ESM_Utils
 		}
 	}
 	
+	private static long lastWorldtimeDayCheck = Long.MIN_VALUE;
+	private static boolean isSiegeAllowedCached = false;
+	
 	public static boolean isSiegeAllowed(Long worldTime) {
-		if ((ESM_Settings.SiegeWarmup > 0) && !isWarmupElapsed)
-		{
+		if ((ESM_Settings.SiegeWarmup > 0) && !isWarmupElapsed) {
 			if ((worldTime / 24000L) < ESM_Settings.SiegeWarmup)
 				return false; // still warming up
 			isWarmupElapsed = true; // save unnecessary logic
 		}
-		return (ESM_Settings.SiegeFrequency == 1) ? true : (((worldTime / 24000L)) % (ESM_Settings.SiegeFrequency)) == 0; 
+		
+		if (ESM_Settings.SiegeFrequency == 1)
+			return true;
+		
+		// only update the cached check value if the day has actually changed since last check
+		if ((worldTime >= lastWorldtimeDayCheck + 24000L) || worldTime < lastWorldtimeDayCheck) {
+			// update the last check time to the nearest 24000 ticks
+			long worldDaysElapsed = worldTime / 24000L;
+			lastWorldtimeDayCheck = worldDaysElapsed * 24000L;
+			isSiegeAllowedCached = worldDaysElapsed % ESM_Settings.SiegeFrequency == 0;
+		}
+		
+		return isSiegeAllowedCached;
 	}
 	
 	private static boolean nerfedPick = !Items.iron_pickaxe.canHarvestBlock(Blocks.stone, new ItemStack(Items.iron_pickaxe));
