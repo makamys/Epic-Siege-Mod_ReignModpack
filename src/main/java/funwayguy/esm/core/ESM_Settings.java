@@ -102,7 +102,9 @@ public class ESM_Settings
 	public static boolean ZombieGriefBlocksAnyTime;
 	public static boolean ZombieGriefBlocksNoTool;
 	public static boolean ZombieGriefBlocksLightSources;
-	public static int ZombieGriefBlocksTriesPerTick = 30;
+	public static int ZombieGriefBlocksTriesPerTick = 15;
+	public static int ZombieGriefBlocksRangeXZ = 6;
+	public static int ZombieGriefBlocksRangeY = 4;
 	private static BlockAndMeta[] ZombieDigBlacklist; // use getZombieDigBlacklist instead
 	private static ArrayList<String> ZombieDigBlacklistRaw;
 	public static boolean ZombieSwapList;
@@ -274,7 +276,9 @@ public class ESM_Settings
 		ZombieGriefBlocksAnyTime = defConfig.get("Zombie", "Always Griefable", true, "If true, Zombies will be able to grief blocks from the block list any time - not just when a siege is underway.").getBoolean(true);
 		ZombieGriefBlocksNoTool = defConfig.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = defConfig.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
-		ZombieGriefBlocksTriesPerTick = defConfig.get("Zombie", "How many iterations to search for Griefable Blocks per tick", ZombieGriefBlocksTriesPerTick, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(ZombieGriefBlocksTriesPerTick);
+		ZombieGriefBlocksTriesPerTick = defConfig.get("Zombie", "How many iterations to search for Griefable Blocks per tick", ZombieGriefBlocksTriesPerTick, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it. Note that Air and Liquid blocks are not counted.").getInt(ZombieGriefBlocksTriesPerTick);
+		ZombieGriefBlocksRangeXZ = defConfig.get("Zombie", "The X/Z range for Zombies to search for griefing", ZombieGriefBlocksRangeXZ, "A radius value, defining a box centered on the zombie. E.g. a value of 8 will cause zombies to search in a 17x17 area centered on the zombie.").getInt(ZombieGriefBlocksRangeXZ);
+		ZombieGriefBlocksRangeY = defConfig.get("Zombie", "The Y range to for Zombies to search for griefing", ZombieGriefBlocksRangeY, "A height upwards or downwards to search e.g. a value of 4 will search a total height of 9 centered on the zombie's foot level. Combines with ZombieGriefBlocksRangeXZ to form a search cube.").getInt(ZombieGriefBlocksRangeY);
 		ZombieDigBlacklistRaw = new ArrayList<String>(Arrays.asList(defConfig.get("Zombie", "Digging Blacklist", new String[]{}, "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = defConfig.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = defConfig.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
@@ -477,6 +481,8 @@ public class ESM_Settings
 		ZombieGriefBlocksNoTool = config.get("Zombie", "Griefable Blocks Ignore Tool Requirement", true, "If true, Zombies will be able to grief blocks from the block list without needing the right tool.").getBoolean(true);
 		ZombieGriefBlocksLightSources = config.get("Zombie", "All lightsources griefable", true, "If true, Zombies will target any light source for griefing. Set to false if you want to manually specify them.").getBoolean(true);
 		ZombieGriefBlocksTriesPerTick = config.get("Zombie", "How many iterations to search for Griefable Blocks per tick", ZombieGriefBlocksTriesPerTick, "Zombies will look at this many random nearby blocks each tick to decide if it will grief it").getInt(ZombieGriefBlocksTriesPerTick);
+		ZombieGriefBlocksRangeXZ = config.get("Zombie", "The X/Z range for Zombies to search for griefing", ZombieGriefBlocksRangeXZ, "A radius value, defining a box centered on the zombie. E.g. a value of 8 will cause zombies to search in a 17x17 area centered on the zombie.").getInt(ZombieGriefBlocksRangeXZ);
+		ZombieGriefBlocksRangeY = config.get("Zombie", "The Y range to for Zombies to search for griefing", ZombieGriefBlocksRangeY, "A height upwards or downwards to search e.g. a value of 4 will search a total height of 9 centered on the zombie's foot level. Combines with ZombieGriefBlocksRangeXZ to form a search cube.").getInt(ZombieGriefBlocksRangeY);
 		ZombieDigBlacklistRaw = new ArrayList<String>(Arrays.asList(config.get("Zombie", "Digging Blacklist", ZombieDigBlacklistRaw.toArray(new String[]{}), "Blacklisted blocks for digging (Add ':#' for metadata e.g. 'minecraft:wool:1')").getStringList()));
 		ZombieSwapList = config.get("Zombie", "Blacklist to Whitelist", false, "Use the digging blacklist as a whitelist instead").getBoolean(false);
 		DemolitionZombies = config.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);

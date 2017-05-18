@@ -4,7 +4,7 @@ import funwayguy.esm.core.BlockAndMeta;
 import funwayguy.esm.core.ESM_Settings;
 import funwayguy.esm.core.ESM_Utils;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.material.*;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.init.Blocks;
@@ -57,22 +57,26 @@ public class ESM_EntityAIGrief extends EntityAIBase
 		int[] candidate = null;
 		ItemStack item = entityLiving.getEquipmentInSlot(0);
 		
-		for (int l = 0; l < ESM_Settings.ZombieGriefBlocksTriesPerTick; l++) {
-			int ii = i + entityLiving.getRNG().nextInt(16) - 8;
-			int jj = j + entityLiving.getRNG().nextInt(8) - 4;
-			int kk = k + entityLiving.getRNG().nextInt(16) - 8;
+		int checks = 0;
+		while (checks < ESM_Settings.ZombieGriefBlocksTriesPerTick) {
+			int checkX = i + entityLiving.getRNG().nextInt(ESM_Settings.ZombieGriefBlocksRangeXZ * 2) - ESM_Settings.ZombieGriefBlocksRangeXZ;
+			int checkY = j + entityLiving.getRNG().nextInt(ESM_Settings.ZombieGriefBlocksRangeY * 2) - ESM_Settings.ZombieGriefBlocksRangeY;
+			int checkZ = k + entityLiving.getRNG().nextInt(ESM_Settings.ZombieGriefBlocksRangeXZ * 2) - ESM_Settings.ZombieGriefBlocksRangeXZ;
 			
-			Block block = entityLiving.worldObj.getBlock(ii, jj, kk);
-			int meta = entityLiving.worldObj.getBlockMetadata(ii, jj, kk);
+			Block block = entityLiving.worldObj.getBlock(checkX, checkY, checkZ);
+			if (block.getMaterial() instanceof MaterialLiquid || block.getMaterial() instanceof MaterialTransparent)
+				continue;
+			int meta = entityLiving.worldObj.getBlockMetadata(checkX, checkY, checkZ);
 			
-			if ((BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieGriefBlocks()) || (ESM_Settings.ZombieGriefBlocksLightSources && block.getLightValue() > 0)) && block.getBlockHardness(entityLiving.worldObj, ii, jj, kk) >= 0 && !block.getMaterial().isLiquid())
+			if ((BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieGriefBlocks()) || (ESM_Settings.ZombieGriefBlocksLightSources && block.getLightValue() > 0)) && block.getBlockHardness(entityLiving.worldObj, checkX, checkY, checkZ) >= 0)
 			{
 				if(!ESM_Settings.ZombieDiggerTools || ESM_Settings.ZombieGriefBlocksNoTool || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired())
 				{
-					candidate = new int[]{ii, jj, kk};
+					candidate = new int[]{checkX, checkY, checkZ};
 					break;
 				}
 			}
+			checks++;
 		}
 		
 		if(candidate == null)
