@@ -17,7 +17,6 @@ import funwayguy.esm.core.proxies.CommonProxy;
 import funwayguy.esm.entities.EntityESMGhast;
 import funwayguy.esm.entities.EntityNeatZombie;
 import funwayguy.esm.handlers.ESM_EventManager;
-import funwayguy.esm.handlers.ESM_UpdateNotification;
 import funwayguy.esm.world.dimensions.WorldProviderNewHell;
 import funwayguy.esm.world.dimensions.WorldProviderSpace;
 import funwayguy.esm.world.gen.WorldGenFortress;

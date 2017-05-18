@@ -1,7 +1,6 @@
 package funwayguy.esm.core;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import cpw.mods.fml.common.registry.GameRegistry;

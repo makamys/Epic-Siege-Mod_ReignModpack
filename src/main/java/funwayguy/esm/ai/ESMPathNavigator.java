@@ -1,7 +1,6 @@
 package funwayguy.esm.ai;
 
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import funwayguy.esm.core.ESM;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;

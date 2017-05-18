@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.EntityList;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
