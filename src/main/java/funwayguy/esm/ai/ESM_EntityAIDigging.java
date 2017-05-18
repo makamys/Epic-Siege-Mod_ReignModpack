@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import funwayguy.esm.core.BlockAndMeta;
 import funwayguy.esm.core.ESM;
 import funwayguy.esm.core.ESM_Settings;
 import funwayguy.esm.core.ESM_Utils;
@@ -174,11 +175,13 @@ public class ESM_EntityAIDigging extends EntityAIBase
     		int meta = entityLiving.worldObj.getBlockMetadata(mop.blockX, mop.blockY, mop.blockZ);
     		ItemStack item = entityLiving.getEquipmentInSlot(0);
     		
-    		if(ESM_Settings.ZombieDigBlacklist.contains(Block.blockRegistry.getNameForObject(block)) == !ESM_Settings.ZombieSwapList || ESM_Settings.ZombieDigBlacklist.contains(Block.blockRegistry.getNameForObject(block) + ":" + meta) == !ESM_Settings.ZombieSwapList)
-    		{
-    			scanTick = (scanTick + 1)%passMax;
-    			return null;
-    		}
+			// check config blacklist (or whitelist if configured as such)
+    		if (BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieDigBlacklist())) {
+        		if (!ESM_Settings.ZombieSwapList) {
+            		scanTick = (scanTick + 1) % passMax;
+            		return null;
+            	}
+        	}
     		
     		if(!ESM_Settings.ZombieDiggerTools || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired())
     		{

@@ -495,7 +495,7 @@ public class ESM_Utils
 	/**
 	 * Used by ESMPathFinder and ESM_EntityAIDoorInteract to check if a BlockDoor, 
 	 * BlockFenceGate or BlockTrapDoor subclass should be considered griefable.
-	 * @param block a block that subclasses either BlockDoor, BlockFenceGate or BlockTrapDoor (this check is NOT made in this method)
+	 * @param block a block that subclasses either BlockDoor, BlockFenceGate or BlockTrapDoor (NB: A required precondition)
 	 */
 	public static boolean isDoorOrGateGriefable(World world, Block block, int meta, Entity entity) {
 		if (world.difficultySetting == EnumDifficulty.HARD)
@@ -510,12 +510,8 @@ public class ESM_Utils
 			if (isSiegeAllowed(world.getWorldTime()))
 				return true;
 			
-			String regName = Block.blockRegistry.getNameForObject(block);
-			if (regName != null) {
-				if(ESM_Settings.ZombieGriefBlocks.contains(regName) || ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta)) {
-					return true;
-				}
-			}
+			if (BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieGriefBlocks()))
+				return true;
 		}
 		
     	return false;

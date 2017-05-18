@@ -1,5 +1,6 @@
 package funwayguy.esm.ai;
 
+import funwayguy.esm.core.BlockAndMeta;
 import funwayguy.esm.core.ESM_Settings;
 import funwayguy.esm.core.ESM_Utils;
 import net.minecraft.block.Block;
@@ -63,9 +64,8 @@ public class ESM_EntityAIGrief extends EntityAIBase
 			
 			Block block = entityLiving.worldObj.getBlock(ii, jj, kk);
 			int meta = entityLiving.worldObj.getBlockMetadata(ii, jj, kk);
-			String regName = Block.blockRegistry.getNameForObject(block);
 			
-			if((ESM_Settings.ZombieGriefBlocks.contains(regName) || ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta) || (ESM_Settings.ZombieGriefBlocksLightSources && block.getLightValue() > 0)) && block.getBlockHardness(entityLiving.worldObj, ii, jj, kk) >= 0 && !block.getMaterial().isLiquid())
+			if ((BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieGriefBlocks()) || (ESM_Settings.ZombieGriefBlocksLightSources && block.getLightValue() > 0)) && block.getBlockHardness(entityLiving.worldObj, ii, jj, kk) >= 0 && !block.getMaterial().isLiquid())
 			{
 				if(!ESM_Settings.ZombieDiggerTools || ESM_Settings.ZombieGriefBlocksNoTool || (item != null && (item.getItem().canHarvestBlock(block, item) || (item.getItem() instanceof ItemPickaxe && nerfedPick && block.getMaterial() == Material.rock))) || block.getMaterial().isToolNotRequired())
 				{
@@ -101,9 +101,10 @@ public class ESM_EntityAIGrief extends EntityAIBase
 		
 		Block block = entityLiving.worldObj.getBlock(markedLoc[0], markedLoc[1], markedLoc[2]);
 		int meta = entityLiving.worldObj.getBlockMetadata(markedLoc[0], markedLoc[1], markedLoc[2]);
-		String regName = Block.blockRegistry.getNameForObject(block);
 		
-		if(block == null || block == Blocks.air || (!ESM_Settings.ZombieGriefBlocks.contains(regName) && !ESM_Settings.ZombieGriefBlocks.contains(regName + ":" + meta) && block.getLightValue() <= 0))
+		
+		
+		if(block == null || block == Blocks.air || (!BlockAndMeta.isInBlockAndMetaList(block, meta, ESM_Settings.getZombieGriefBlocks()) && block.getLightValue() <= 0))
 		{
 			markedLoc = null;
 			return false;
