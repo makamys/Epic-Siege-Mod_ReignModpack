@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import net.minecraft.entity.EntityList;
+import net.minecraft.init.Blocks;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
@@ -106,6 +107,9 @@ public class ESM_Settings
 	public static int ZombieGriefBlocksRangeY = 4;
 	private static BlockAndMeta[] ZombieDigBlacklist; // use getZombieDigBlacklist instead
 	private static ArrayList<String> ZombieDigBlacklistRaw;
+	private static String ZombiePillaringBlockRaw;
+	private static BlockAndMeta ZombiePillaringBlock; // use getZombiePillaringBlock instead
+
 	public static boolean ZombieSwapList;
 	public static boolean DemolitionZombies;
 	public static boolean ZombieEnhancementsOnlyWhenSiegeAllowed = true;
@@ -283,6 +287,7 @@ public class ESM_Settings
 		DemolitionZombies = defConfig.get("Zombie", "Demolition Zombies", true, "Zombies can placed armed TNT").getBoolean(true);
 		ZombieEnhancementsOnlyWhenSiegeAllowed = defConfig.getBoolean("Enhance only when siege allowed", "Zombie", true, "If true, the Zombie siege capabilites will be disabled if siege is not allowed.\n" + 
 				"See freqency and warmup settings under Main. Applies to all existing Zombies - including already-spawned ones.");
+		ZombiePillaringBlockRaw = defConfig.get("Zombie", "Pillaring Block", "minecraft:cobblestone", "The block to use for pillaring").getString();
 		
 		//Blazes
 		BlazeSpawn = defConfig.get("Blaze", "Spawn", true).getBoolean(true);
@@ -619,6 +624,18 @@ public class ESM_Settings
 				ZombieDigBlacklist = null;
 		}
 		return ZombieDigBlacklist;
+	}
+	
+	public static BlockAndMeta getZombiePillaringBlock() {
+		if (ZombiePillaringBlock == null) {
+			BlockAndMeta[] ZombiePillaringBlocks = BlockAndMeta.buildList("Zombie pillaring block", Arrays.asList(ZombiePillaringBlockRaw).toArray(new String[1]));
+			if (ZombiePillaringBlocks != null && ZombiePillaringBlocks.length == 0) {
+				ESM.log.log(Level.WARN, "Failed to resolve pillaring block, falling back to cobblestone");
+				ZombiePillaringBlocks = new BlockAndMeta[]{new BlockAndMeta(Blocks.cobblestone, 0)};
+			}
+			ZombiePillaringBlock = ZombiePillaringBlocks[0];
+		}
+		return ZombiePillaringBlock;
 	}
 	
 	@SuppressWarnings("unchecked")
