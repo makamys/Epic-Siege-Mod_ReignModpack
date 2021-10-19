@@ -1,5 +1,6 @@
 package funwayguy.esm.ai;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -128,7 +129,8 @@ public class ESM_EntityAIPillarUp extends EntityAIBase
 			
 			if(builder.worldObj.getBlock(blockX, blockY, blockZ).getMaterial().isReplaceable())
 			{
-				builder.worldObj.setBlock(blockX, blockY, blockZ, Blocks.cobblestone);
+				// TODO set meta as well
+				builder.worldObj.setBlock(blockX, blockY, blockZ, ESM_Settings.getZombiePillaringBlock().block);
 			}
 			
 			builder.getNavigator().setPath(builder.getNavigator().getPathToEntityLiving(target), 1D);
